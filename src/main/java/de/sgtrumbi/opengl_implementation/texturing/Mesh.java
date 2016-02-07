@@ -9,5 +9,13 @@ import de.sgtrumbi.opengl_implementation.Cleanable;
  */
 public interface Mesh extends Bindable, Cleanable {
 
+    /**
+     * Used for drawing the currently bound vao/mesh
+     *
+     * (Mostly used:
+     *   - GL11.glDrawArrays(...)
+     *   - GL11.glDrawElements(...)
+     * )
+     */
     void draw();
 }
