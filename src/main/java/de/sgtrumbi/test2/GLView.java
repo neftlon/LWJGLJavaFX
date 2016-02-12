@@ -21,6 +21,7 @@ public class GLView implements View {
     private long glfwWindowHandle;
     private ByteBuffer buffer;
     private int width, height;
+    private ImageView imageView;
 
     public GLView(DrawCallback readyToDrawNotifier, int initialWidth, int initialHeight) {
         this.drawCallback = readyToDrawNotifier;
@@ -33,6 +34,8 @@ public class GLView implements View {
     @Override
     public void onUpdate() {
         drawCallback.onDraw();
+
+        buffer.clear().position(0);
 
         GL11.glViewport(0, 0, width, height);
         GL11.glReadPixels(0, 0, width, height, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
@@ -55,8 +58,10 @@ public class GLView implements View {
 
         bufferImage = new WritableImage(width, height);
 
+        // Resize the GLFW window
         GLFW.glfwSetWindowSize(glfwWindowHandle, width, height);
 
+        // Recreate the Buffer
         buffer = BufferUtils.createByteBuffer(width * height * 4);
 
         if (GLView.debug)
@@ -64,17 +69,35 @@ public class GLView implements View {
     }
 
     @Override
+    public void onResizeWidth(int width) {
+        onResize(width, this.height);
+    }
+
+    @Override
+    public void onResizeHeight(int width) {
+        onResize(this.width, height);
+    }
+
+    @Override
     public void onClose() {
         if (GLView.debug)
             System.out.println("(GLView): Shutting GLFW and OpenGL-Context down.");
 
+        // Destroy the GLFW window
         GLFW.glfwDestroyWindow(glfwWindowHandle);
+
+        // Terminate GLFW
         GLFW.glfwTerminate();
     }
 
     @Override
     public ImageView get() {
-        return new ImageView(bufferImage);
+        if (imageView != null)
+            return imageView;
+
+        imageView = new ImageView(bufferImage);
+
+        return imageView;
     }
 
     private long setupContext() {
@@ -123,11 +146,16 @@ public class GLView implements View {
     }
 
     //
-    // /!\ STOP! HERE COMES STATIC /!\
+    // /!\ HERE COMES STATIC /!\
     //
     private static boolean debug = false;
 
     public static void setDebug(boolean debug) {
+        if (debug)
+            System.out.println("(GLView): Turning on debug output.");
+        else
+            System.out.println("(GLView): Switching off debug output.");
+
         GLView.debug = debug;
     }
 }
