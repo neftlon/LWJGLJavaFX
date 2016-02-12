@@ -86,7 +86,6 @@ public class GLStagePlatform implements PixelGetter, GLStage {
             if (success) {
                 if (drawcursor && currentframe != null) {
                     cursorlock.lock();
-                    //NOTE composite the cursor
 
                     Image img = (Image) currentframe.getPlatformImage();
 
