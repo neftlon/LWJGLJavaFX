@@ -19,5 +19,5 @@ uniform sampler2D u_Texture;
 // The main function.
 void main() {
     // Swizzle it to make the color loading error null.
-    o_Color = texture(u_Texture, fs_In.p_TextureCoordinate).abgr;
+    o_Color = texture(u_Texture, fs_In.p_TextureCoordinate).gbar;
 }
